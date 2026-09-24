@@ -1,0 +1,58 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs / editors
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment secrets (keep .env.example if present)
+.env
+.env.*
+!.env.example
+
+# Frontend — Node.js / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+.vercel/
+*.tsbuildinfo
+
+# Backend — ASP.NET Core / .NET
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+TestResults/
+*.nupkg
+**/packages/*
+!**/packages/build/
+publish/
+PublishProfiles/
+*.Publish.xml
+*.pubxml
+*.pubxml.user
+appsettings.*.local.json
