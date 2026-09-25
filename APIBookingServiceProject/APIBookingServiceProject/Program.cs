@@ -1,5 +1,7 @@
 using APIBookingServiceProject.Data;
+using APIBookingServiceProject.Repositories.EmployeeRepo;
 using APIBookingServiceProject.Repositories.Service;
+using APIBookingServiceProject.Services.Empolyee;
 using APIBookingServiceProject.Services.Service;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,8 @@ builder.Services.AddDbContext<ServiceBookingDbContext>(options =>
 });
 builder.Services.AddScoped<IMyServiceRepository, MyServiceRepository>();
 builder.Services.AddScoped<IMyServiceManager, MyServiceManager>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

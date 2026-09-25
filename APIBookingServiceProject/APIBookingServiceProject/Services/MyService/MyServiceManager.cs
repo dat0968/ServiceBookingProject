@@ -60,7 +60,6 @@ namespace APIBookingServiceProject.Services.Service
 
         async Task<MyServiceResponseDto?> IMyServiceManager.UpdateAsync(int id, MyServiceRequestDto myServiceRequestDto)
         {
-            // Validate
             MyServiceHelper.ValidateService(myServiceRequestDto);
             var myService = await myServiceRepository.GetByIdAsync(id);
             if(myService == null)
@@ -71,7 +70,7 @@ namespace APIBookingServiceProject.Services.Service
             myService.Price = myServiceRequestDto.Price;
             myService.DescriptionService = myServiceRequestDto.DescriptionService;
             myService.DurationMinutes = myServiceRequestDto.DurationMinutes;
-
+            myService.IsActive = true;
             var result = await myServiceRepository.UpdateAsync(myService);
             return result ? MyServiceHelper.MapToResponseDto(myService) : null;
         }
