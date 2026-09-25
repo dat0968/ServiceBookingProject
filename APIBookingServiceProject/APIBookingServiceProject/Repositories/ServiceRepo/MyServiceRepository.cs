@@ -17,18 +17,6 @@ namespace APIBookingServiceProject.Repositories.Service
             await dbContext.SaveChangesAsync();
             return myService;
         }
-
-        public async Task<bool> ChangeStatusAsync(int id, bool isActive)
-        {
-            var myService = await dbContext.MyServices.FirstOrDefaultAsync(s => s.Id == id);
-            if (myService == null)
-            {
-                return false;
-            }
-            myService.IsActive = isActive;
-            var result = await dbContext.SaveChangesAsync();
-            return result > 0;
-        }
        
         public async Task<List<MyService>> GetAllAsync(string? search, int page, int pageSize)
         {
@@ -61,14 +49,17 @@ namespace APIBookingServiceProject.Repositories.Service
 
             return await query.CountAsync();
         }
-        public async Task<MyService?> GetByIdAsync(int id){
-            return await dbContext.MyServices.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        public async Task<MyService?> GetByIdAsync(int id, bool withAsNoTracking = true){
+            if (withAsNoTracking)
+            {
+                return await dbContext.MyServices.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            }
+            return await dbContext.MyServices.FirstOrDefaultAsync(x => x.Id == id);
         }
-        public async Task<bool> UpdateAsync(MyService myService)
+        public async Task UpdateAsync(MyService myService)
         {
             dbContext.MyServices.Update(myService);
-            var result = await dbContext.SaveChangesAsync();
-            return result > 0;
+            await dbContext.SaveChangesAsync();
         }
     }
 }

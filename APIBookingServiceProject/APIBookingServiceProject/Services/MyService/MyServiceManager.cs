@@ -3,7 +3,6 @@ using APIBookingServiceProject.DTOs.MyServiceDTO;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
 using APIBookingServiceProject.Repositories.Service;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace APIBookingServiceProject.Services.Service
 {
     public class MyServiceManager : IMyServiceManager
@@ -13,9 +12,16 @@ namespace APIBookingServiceProject.Services.Service
         {
             this.myServiceRepository = myServiceRepository;
         }
-        Task<bool> IMyServiceManager.ChangeStatusAsync(int id, bool isActive)
+        async Task<bool> IMyServiceManager.ChangeStatusAsync(int id, bool isActive)
         {
-            return myServiceRepository.ChangeStatusAsync(id, isActive);
+            var myService = await myServiceRepository.GetByIdAsync(id, false);
+            if (myService == null)
+            {
+                return false;
+            }
+            myService.IsActive = isActive;
+            await myServiceRepository.UpdateAsync(myService);
+            return true;
         }
 
         async Task<MyServiceResponseDto> IMyServiceManager.CreateAsync(MyServiceRequestDto myServiceRequestDto)
@@ -61,7 +67,7 @@ namespace APIBookingServiceProject.Services.Service
         async Task<MyServiceResponseDto?> IMyServiceManager.UpdateAsync(int id, MyServiceRequestDto myServiceRequestDto)
         {
             MyServiceHelper.ValidateService(myServiceRequestDto);
-            var myService = await myServiceRepository.GetByIdAsync(id);
+            var myService = await myServiceRepository.GetByIdAsync(id, false);
             if(myService == null)
             {
                 return null;
@@ -71,8 +77,8 @@ namespace APIBookingServiceProject.Services.Service
             myService.DescriptionService = myServiceRequestDto.DescriptionService;
             myService.DurationMinutes = myServiceRequestDto.DurationMinutes;
             myService.IsActive = true;
-            var result = await myServiceRepository.UpdateAsync(myService);
-            return result ? MyServiceHelper.MapToResponseDto(myService) : null;
+            await myServiceRepository.UpdateAsync(myService);
+            return MyServiceHelper.MapToResponseDto(myService);
         }
     }
 }
