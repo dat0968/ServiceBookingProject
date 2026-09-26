@@ -1,5 +1,6 @@
 ﻿using APIBookingServiceProject.Data;
 using APIBookingServiceProject.DTOs.MyServiceDTO;
+using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
 using APIBookingServiceProject.Repositories.Service;
@@ -17,7 +18,7 @@ namespace APIBookingServiceProject.Services.Service
             var myService = await myServiceRepository.GetByIdAsync(id, false);
             if (myService == null)
             {
-                return false;
+                throw new NotFoundException($"MyService with id {id} not found");
             }
             myService.IsActive = isActive;
             await myServiceRepository.UpdateAsync(myService);
@@ -59,7 +60,7 @@ namespace APIBookingServiceProject.Services.Service
             var myServices = await myServiceRepository.GetByIdAsync(id);
             if (myServices == null)
             {
-                return null;
+                throw new NotFoundException($"MyService with id {id} not found");
             }
             return MyServiceHelper.MapToResponseDto(myServices);
         }
@@ -70,13 +71,13 @@ namespace APIBookingServiceProject.Services.Service
             var myService = await myServiceRepository.GetByIdAsync(id, false);
             if(myService == null)
             {
-                return null;
+                throw new NotFoundException($"MyService with id {id} not found");
             }
             myService.NameService = myServiceRequestDto.NameService.Trim();
             myService.Price = myServiceRequestDto.Price;
             myService.DescriptionService = myServiceRequestDto.DescriptionService;
             myService.DurationMinutes = myServiceRequestDto.DurationMinutes;
-            myService.IsActive = true;
+            myService.IsActive = myService.IsActive;
             await myServiceRepository.UpdateAsync(myService);
             return MyServiceHelper.MapToResponseDto(myService);
         }

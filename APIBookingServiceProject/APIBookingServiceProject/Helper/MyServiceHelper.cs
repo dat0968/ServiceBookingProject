@@ -1,4 +1,5 @@
 ﻿using APIBookingServiceProject.DTOs.MyServiceDTO;
+using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Models;
 
 namespace APIBookingServiceProject.Helper
@@ -7,6 +8,10 @@ namespace APIBookingServiceProject.Helper
     {
         public static MyServiceResponseDto MapToResponseDto(MyService myService)
         {
+            if (myService == null)
+            {
+                throw new NotFoundException("MyService not found");
+            }
             return new MyServiceResponseDto
             {
                 Id = myService.Id,
@@ -21,19 +26,19 @@ namespace APIBookingServiceProject.Helper
         {
             if (string.IsNullOrWhiteSpace(dto.NameService))
             {
-                throw new ArgumentException(
+                throw new BadRequestException(
                     "Tên dịch vụ là bắt buộc.");
             }
 
             if (dto.DurationMinutes <= 0)
             {
-                throw new ArgumentException(
+                throw new BadRequestException(
                     "Thời lượng phải lớn hơn 0.");
             }
 
             if (dto.Price < 0)
             {
-                throw new ArgumentException(
+                throw new BadRequestException(
                     "Giá không được âm.");
             }
         }

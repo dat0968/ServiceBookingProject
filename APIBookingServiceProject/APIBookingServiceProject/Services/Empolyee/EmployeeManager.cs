@@ -1,5 +1,6 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
 using APIBookingServiceProject.DTOs.MyServiceDTO;
+using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
 using APIBookingServiceProject.Repositories.EmployeeRepo;
@@ -14,9 +15,16 @@ namespace APIBookingServiceProject.Services.Empolyee
         {
             this.employeeRepository = employeeRepository;
         }
-        public Task<bool> ChangeStatusAsync(int Id, bool isActive)
+        public async Task<bool> ChangeStatusAsync(int Id, bool isActive)
         {
-            return employeeRepository.ChangeStatusAsync(Id, isActive);
+            var employee = await employeeRepository.GetByIdAsync(Id, false);
+            if(employee == null)
+            {
+                throw new NotFoundException($"Staff with id {Id} not found");
+            }
+            employee.IsActive = isActive;
+            await employeeRepository.UpdateAsync(employee);
+            return true;
         }
 
         public async Task<EmployeeResponseDto> CreateAsync(EmployeeRequestDto staff)
@@ -43,7 +51,7 @@ namespace APIBookingServiceProject.Services.Empolyee
             var staff = await employeeRepository.GetByIdAsync(Id);
             if (staff == null)
             {
-                return null;
+                throw new NotFoundException($"Staff with id {Id} not found");
             }
             return StaffHelper.MapToResponseDto(staff);
         }
@@ -54,13 +62,13 @@ namespace APIBookingServiceProject.Services.Empolyee
             var staff = await employeeRepository.GetByIdAsync(Id);
             if (staff == null)
             {
-                return null;
+                throw new NotFoundException($"Staff with id {Id} not found");
             }
             staff.FullName = employeeRequestDto.FullName.Trim();
             staff.Email = employeeRequestDto.Email;
-            staff.IsActive = true;
-            var result = await employeeRepository.UpdateAsync(staff);
-            return result ? StaffHelper.MapToResponseDto(staff) : null;
+            staff.IsActive = staff.IsActive;
+            await employeeRepository.UpdateAsync(staff);
+            return StaffHelper.MapToResponseDto(staff);
         }
     }
 }

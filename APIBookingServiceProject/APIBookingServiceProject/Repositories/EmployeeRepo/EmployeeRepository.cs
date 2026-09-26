@@ -11,14 +11,6 @@ namespace APIBookingServiceProject.Repositories.EmployeeRepo
         {
             this.dbContext = dbContext;
         }
-        public async Task<bool> ChangeStatusAsync(int Id, bool isActive)
-        {
-            var findStaff = await dbContext.Staffs.FirstOrDefaultAsync(s => s.Id == Id);
-            if (findStaff == null) return false;
-            findStaff.IsActive = isActive;
-            var result = await dbContext.SaveChangesAsync();
-            return result > 0;
-        }
 
         public async Task<Staff> CreateAsync(Staff staff)
         {
@@ -32,16 +24,19 @@ namespace APIBookingServiceProject.Repositories.EmployeeRepo
             return await dbContext.Staffs.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Staff?> GetByIdAsync(int Id)
+        public async Task<Staff?> GetByIdAsync(int Id, bool withAsNoTracking = true)
         {
-            return await dbContext.Staffs.AsNoTracking().FirstOrDefaultAsync(s => s.Id == Id);
+            if(withAsNoTracking)
+            {
+                return await dbContext.Staffs.AsNoTracking().FirstOrDefaultAsync(s => s.Id == Id);
+            }
+            return await dbContext.Staffs.FirstOrDefaultAsync(s => s.Id == Id);
         }
 
-        public async Task<bool> UpdateAsync(Staff staff)
+        public async Task UpdateAsync(Staff staff)
         {
             dbContext.Staffs.Update(staff);
-            var result = await dbContext.SaveChangesAsync();
-            return result > 0;
+            await dbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
 using APIBookingServiceProject.DTOs.MyServiceDTO;
+using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Models;
 
 namespace APIBookingServiceProject.Helper
@@ -8,6 +9,10 @@ namespace APIBookingServiceProject.Helper
     {
         public static EmployeeResponseDto MapToResponseDto(Staff staff)
         {
+            if (staff == null)
+            {
+                throw new NotFoundException("Staff not found");
+            }
             return new EmployeeResponseDto
             {
                 Id = staff.Id,
@@ -20,12 +25,12 @@ namespace APIBookingServiceProject.Helper
         {
             if (string.IsNullOrWhiteSpace(dto.FullName))
             {
-                throw new ArgumentException(
+                throw new BadRequestException(
                     "Tên nhân viên là bắt buộc.");
             }
             if (string.IsNullOrWhiteSpace(dto.Email))
             {
-                throw new ArgumentException(
+                throw new BadRequestException(
                     "Email là bắt buộc.");
             }
         }
