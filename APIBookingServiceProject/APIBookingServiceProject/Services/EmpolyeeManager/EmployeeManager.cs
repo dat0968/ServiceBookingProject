@@ -6,7 +6,7 @@ using APIBookingServiceProject.Models;
 using APIBookingServiceProject.Repositories.EmployeeRepo;
 using APIBookingServiceProject.Repositories.Service;
 
-namespace APIBookingServiceProject.Services.Empolyee
+namespace APIBookingServiceProject.Services.EmpolyeeManager
 {
     public class EmployeeManager : IEmployeeManager
     {

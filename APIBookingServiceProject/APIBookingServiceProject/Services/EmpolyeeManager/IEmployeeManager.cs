@@ -1,7 +1,7 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
 using APIBookingServiceProject.Models;
 
-namespace APIBookingServiceProject.Services.Empolyee
+namespace APIBookingServiceProject.Services.EmpolyeeManager
 {
     public interface IEmployeeManager
     {

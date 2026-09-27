@@ -5,8 +5,8 @@ namespace APIBookingServiceProject.DTOs.WorkScheduleDTO
     public class WorkScheduleResponseDto
     {
         public int Id { get; set; }
-
         public int StaffId { get; set; }
+        public string StaffName { get; set; } = null!;
 
         public DateOnly WorkDate { get; set; }
 
