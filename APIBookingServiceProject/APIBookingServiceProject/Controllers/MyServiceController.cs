@@ -1,5 +1,6 @@
 ﻿using APIBookingServiceProject.DTOs.MyServiceDTO;
 using APIBookingServiceProject.Services.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIBookingServiceProject.Controllers
@@ -16,6 +17,7 @@ namespace APIBookingServiceProject.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(MyServiceRequestDto myServiceRequestDto)
         {
             var result = await _service.CreateAsync(myServiceRequestDto);
@@ -26,7 +28,7 @@ namespace APIBookingServiceProject.Controllers
         public async Task<IActionResult> GetAll([FromQuery] MyServiceQueryDto query)
         {
             var result = await _service.GetAllAsync(query);
-            return Ok(result);
+            return Ok(result.us);
         }
 
         [HttpGet("{id}")]
@@ -37,6 +39,7 @@ namespace APIBookingServiceProject.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, MyServiceRequestDto myServiceRequestDto)
         {
             var result = await _service.UpdateAsync(id, myServiceRequestDto);
@@ -44,6 +47,7 @@ namespace APIBookingServiceProject.Controllers
         }
 
         [HttpPatch("{id}/status")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangeStatus(int id, bool isActive)
         {
             var result = await _service.ChangeStatusAsync(id, isActive);
