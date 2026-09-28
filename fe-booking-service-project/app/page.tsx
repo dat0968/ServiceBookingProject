@@ -2,27 +2,12 @@
 
 import Link from "next/link";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-
+import Header from "@/components/header";
+import Footer from "@/components/footer"
 export default function Home() {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <header
-        className="d-flex justify-content-between align-items-center px-3 px-md-4 py-3"
-        style={{ background: "#0f766e" }}
-      >
-        <Link href="/" className="text-white text-decoration-none fw-bold fs-5">
-          Service Booking
-        </Link>
-        <nav className="d-flex align-items-center gap-3">
-          <Link
-            href="/login"
-            className="btn btn-light btn-sm fw-semibold"
-          >
-            Đăng nhập
-          </Link>
-        </nav>
-      </header>
-
+      <Header/>
       <section
         className="text-white py-5"
         style={{
@@ -119,10 +104,7 @@ export default function Home() {
           </Row>
         </Container>
       </section>
-
-      <footer className="mt-auto py-3 text-center text-secondary small" style={{ background: "#fff" }}>
-        Service Booking
-      </footer>
+      <Footer/>
     </div>
   );
 }
