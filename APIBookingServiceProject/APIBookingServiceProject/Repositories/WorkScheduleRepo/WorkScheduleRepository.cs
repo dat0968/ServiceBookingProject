@@ -64,5 +64,14 @@ namespace APIBookingServiceProject.Repositories.WorkScheduleRepo
             dbContext.WorkSchedules.Update(workSchedule);
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<WorkSchedule>> GetByStaffAndDateAsync(int staffId, DateOnly workDate)
+        {
+            return await dbContext.WorkSchedules
+                .AsNoTracking()
+                .Where(x => x.StaffId == staffId && x.WorkDate == workDate)
+                .OrderBy(x => x.StartTime)
+                .ToListAsync();
+        }
     }
 }
