@@ -8,7 +8,7 @@ namespace APIBookingServiceProject.Controllers
 {
     [ApiController]
     [Route("api/bookings")]
-    [Authorize]
+
     public class BookingController : ControllerBase
     {
         private readonly IBookingManager bookingManager;

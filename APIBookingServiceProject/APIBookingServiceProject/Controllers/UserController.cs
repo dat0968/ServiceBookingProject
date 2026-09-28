@@ -7,7 +7,7 @@ namespace APIBookingServiceProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    
     public class UserController : ControllerBase
     {
         private readonly IUserManager userManager;

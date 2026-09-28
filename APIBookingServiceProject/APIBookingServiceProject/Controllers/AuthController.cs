@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using APIBookingServiceProject.DTOs.UserDTO;
 using APIBookingServiceProject.Services.UserManager;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +22,45 @@ namespace APIBookingServiceProject.Controllers
         public async Task<IActionResult> Login(LoginRequestDto dto)
         {
             var result = await userManager.LoginAsync(dto);
+            Response.Cookies.Append(
+                "accessToken",
+                result.Token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Path = "/",
+                    MaxAge = TimeSpan.FromHours(2)
+                }
+            );
             return Ok(result);
+        }
+        [HttpGet("validate")]
+        [Authorize]
+        public IActionResult ValidateToken()
+        {
+            return Ok(new
+            {
+                isAuthenticated = true,
+                message = "Token is valid"
+            });
+        }
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("accessToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            });
+
+            return Ok(new
+            {
+                message = "Đăng xuất thành công"
+            });
         }
 
         [Authorize]
