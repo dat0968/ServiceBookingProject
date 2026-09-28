@@ -15,10 +15,10 @@ namespace APIBookingServiceProject.Exceptions
             var statusCodeResponse = exception switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
-
                 BadRequestException => StatusCodes.Status400BadRequest,
                 ConflictException => StatusCodes.Status409Conflict,
-
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
                 _ => StatusCodes.Status500InternalServerError
             };
             httpContext.Response.StatusCode = statusCodeResponse;
