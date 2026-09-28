@@ -34,7 +34,7 @@ namespace APIBookingServiceProject.Controllers
                     MaxAge = TimeSpan.FromHours(2)
                 }
             );
-            return Ok(result);
+            return Ok(result.User);
         }
         [HttpGet("validate")]
         [Authorize]
