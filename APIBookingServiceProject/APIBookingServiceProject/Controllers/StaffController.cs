@@ -1,5 +1,5 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
-using APIBookingServiceProject.Services.Empolyee;
+using APIBookingServiceProject.Services.EmpolyeeManager;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIBookingServiceProject.Controllers
