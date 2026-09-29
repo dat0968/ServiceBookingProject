@@ -28,7 +28,7 @@ namespace APIBookingServiceProject.Controllers
         public async Task<IActionResult> GetAll([FromQuery] MyServiceQueryDto query)
         {
             var result = await _service.GetAllAsync(query);
-            return Ok(result.us);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
