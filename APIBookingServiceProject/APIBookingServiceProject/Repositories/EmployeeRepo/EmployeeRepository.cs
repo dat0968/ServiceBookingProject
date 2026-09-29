@@ -31,7 +31,7 @@ namespace APIBookingServiceProject.Repositories.EmployeeRepo
             return await query.ToListAsync();
         }
 
-        public async Task<Staff?> GetByIdAsync(int Id, bool withAsNoTracking = true)
+        public async Task<Staff?> GetByIdAsync(int? Id, bool withAsNoTracking = true)
         {
             if(withAsNoTracking)
             {
