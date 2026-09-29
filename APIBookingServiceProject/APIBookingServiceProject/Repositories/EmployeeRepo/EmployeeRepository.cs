@@ -19,9 +19,16 @@ namespace APIBookingServiceProject.Repositories.EmployeeRepo
             return staff;
         }
 
-        public async Task<List<Staff>> GetAllAsync()
+        public async Task<List<Staff>> GetAllAsync(string? search = null)
         {
-            return await dbContext.Staffs.AsNoTracking().ToListAsync();
+            var query = dbContext.Staffs.AsNoTracking().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.Trim();
+                query = query.Where(s => s.FullName.Contains(search)
+                                      || s.Email.Contains(search));
+            }
+            return await query.ToListAsync();
         }
 
         public async Task<Staff?> GetByIdAsync(int Id, bool withAsNoTracking = true)

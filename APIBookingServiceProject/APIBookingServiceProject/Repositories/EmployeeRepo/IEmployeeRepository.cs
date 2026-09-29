@@ -4,7 +4,7 @@ namespace APIBookingServiceProject.Repositories.EmployeeRepo
 {
     public interface IEmployeeRepository
     {
-        Task<List<Staff>> GetAllAsync();
+        Task<List<Staff>> GetAllAsync(string? search = null);
         /*
           <param name="withAsNoTracking">
           <c>true</c> (default) for read-only queries to bypass change tracking and optimize performance; 

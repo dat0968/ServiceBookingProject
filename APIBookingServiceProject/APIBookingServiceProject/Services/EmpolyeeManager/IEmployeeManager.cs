@@ -5,7 +5,7 @@ namespace APIBookingServiceProject.Services.EmpolyeeManager
 {
     public interface IEmployeeManager
     {
-        Task<List<EmployeeResponseDto>> GetAllAsync();
+        Task<List<EmployeeResponseDto>> GetAllAsync(string? search = null);
         Task<EmployeeResponseDto?> GetByIdAsync(int Id);
         Task<EmployeeResponseDto> CreateAsync(EmployeeRequestDto staff);
         Task<EmployeeResponseDto?> UpdateAsync(int Id, EmployeeRequestDto employeeRequestDto);

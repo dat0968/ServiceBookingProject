@@ -1,10 +1,8 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
-using APIBookingServiceProject.DTOs.MyServiceDTO;
 using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
 using APIBookingServiceProject.Repositories.EmployeeRepo;
-using APIBookingServiceProject.Repositories.Service;
 
 namespace APIBookingServiceProject.Services.EmpolyeeManager
 {
@@ -40,9 +38,9 @@ namespace APIBookingServiceProject.Services.EmpolyeeManager
             return StaffHelper.MapToResponseDto(myStaff);
         }
 
-        public async Task<List<EmployeeResponseDto>> GetAllAsync()
+        public async Task<List<EmployeeResponseDto>> GetAllAsync(string? search = null)
         {
-            var listStaff = await employeeRepository.GetAllAsync();
+            var listStaff = await employeeRepository.GetAllAsync(search);
             return listStaff.Select(s => StaffHelper.MapToResponseDto(s)).ToList();
         }
 
