@@ -16,7 +16,12 @@ export default function useBooking() {
         startTime: "",
         customerNote: "",
     });
-
+    // Toast
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "success" as "success" | "danger",
+    });
     // Error
     const [error, setError] = useState("");
 
@@ -113,8 +118,14 @@ export default function useBooking() {
                 customerNote: form.customerNote.trim() || undefined,
             };
             await createBooking(bookingRequest);
-            alert("Đặt lịch thành công!");
-            router.push("/services");
+            setToast({
+                show: true,
+                message: "Đặt lịch thành công!",
+                type: "success",
+            });
+            setTimeout(() => {
+                router.push("/services");
+            }, 2000)
         } catch (error: any) {
             if (error.response?.status !== 401) {
                 setError(error.response.data.message);
@@ -156,5 +167,7 @@ export default function useBooking() {
         handleTimeChange,
         handleNoteChange,
         handleSubmit,
+        toast,
+        setToast
     };
 }
