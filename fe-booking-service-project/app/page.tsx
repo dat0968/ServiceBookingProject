@@ -1,13 +1,13 @@
-"use client";
+
 
 import Link from "next/link";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import {Button, Card, CardBody, CardTitle, CardText, Col, Container, Row,} from "@/components/bootstrap";
 import Header from "@/components/header";
 import Footer from "@/components/footer"
 export default function Home() {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Header/>
+      <Header />
       <section
         className="text-white py-5"
         style={{
@@ -36,9 +36,9 @@ export default function Home() {
                     Xem dịch vụ
                   </Button>
                 </Link>
-                <Link href="/login">
+                <Link href="/booking">
                   <Button variant="outline-light" className="px-4 py-2 fw-semibold">
-                    Đăng nhập
+                    Đặt lịch
                   </Button>
                 </Link>
               </div>
@@ -55,56 +55,56 @@ export default function Home() {
           <Row className="g-4">
             <Col md={4}>
               <Card className="h-100 border-0 shadow-sm" style={{ borderRadius: 16 }}>
-                <Card.Body className="p-4">
+                <CardBody className="p-4">
                   <div
                     className="d-inline-flex align-items-center justify-content-center mb-3 fw-bold text-white"
                     style={{ width: 40, height: 40, borderRadius: 10, background: "#0f766e" }}
                   >
                     1
                   </div>
-                  <Card.Title className="fw-semibold">Chọn dịch vụ</Card.Title>
-                  <Card.Text className="text-secondary mb-0">
+                  <CardTitle className="fw-semibold">Chọn dịch vụ</CardTitle>
+                  <CardText className="text-secondary mb-0">
                     Xem danh sách dịch vụ, thời lượng và giá trước khi đặt.
-                  </Card.Text>
-                </Card.Body>
+                  </CardText>
+                </CardBody>
               </Card>
             </Col>
             <Col md={4}>
               <Card className="h-100 border-0 shadow-sm" style={{ borderRadius: 16 }}>
-                <Card.Body className="p-4">
+                <CardBody className="p-4">
                   <div
                     className="d-inline-flex align-items-center justify-content-center mb-3 fw-bold text-white"
                     style={{ width: 40, height: 40, borderRadius: 10, background: "#0f766e" }}
                   >
                     2
                   </div>
-                  <Card.Title className="fw-semibold">Chọn thời gian</Card.Title>
-                  <Card.Text className="text-secondary mb-0">
-                    Đặt lịch vào khung giờ phù hợp với bạn.
-                  </Card.Text>
-                </Card.Body>
+                  <CardTitle className="fw-semibold">Chọn thời gian</CardTitle>
+                  <CardText className="text-secondary mb-0">
+                    Chọn khung giờ còn trống ứng với dịch vụ đã chọn.
+                  </CardText>
+                </CardBody>
               </Card>
             </Col>
             <Col md={4}>
               <Card className="h-100 border-0 shadow-sm" style={{ borderRadius: 16 }}>
-                <Card.Body className="p-4">
+                <CardBody className="p-4">
                   <div
                     className="d-inline-flex align-items-center justify-content-center mb-3 fw-bold text-white"
                     style={{ width: 40, height: 40, borderRadius: 10, background: "#0f766e" }}
                   >
                     3
                   </div>
-                  <Card.Title className="fw-semibold">Xác nhận</Card.Title>
-                  <Card.Text className="text-secondary mb-0">
+                  <CardTitle className="fw-semibold">Xác nhận</CardTitle>
+                  <CardText className="text-secondary mb-0">
                     Nhận xác nhận lịch hẹn và theo dõi trạng thái đặt lịch.
-                  </Card.Text>
-                </Card.Body>
+                  </CardText>
+                </CardBody>
               </Card>
             </Col>
           </Row>
         </Container>
       </section>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

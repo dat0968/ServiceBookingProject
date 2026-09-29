@@ -1,18 +1,62 @@
 import Link from "next/link";
-export default function header() {
-    return (
-        <header
-            className="d-flex justify-content-between align-items-center px-3 px-md-4 py-3"
-            style={{ background: "#0f766e" }}
+import { cookies } from "next/headers";
+
+export default async function Header() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  const isLoggedIn = !!token;
+
+  return (
+    <header
+      className="d-flex justify-content-between align-items-center px-3 px-md-4 py-3"
+      style={{ background: "#0f766e" }}
+    >
+      <Link
+        href="/"
+        className="text-white text-decoration-none fw-bold fs-5"
+      >
+        Service Booking
+      </Link>
+
+      <nav className="d-flex align-items-center gap-3 flex-wrap">
+        <Link
+          href="/services"
+          className="text-white text-decoration-none small fw-semibold"
         >
-            <Link href="/" className="text-white text-decoration-none fw-bold fs-5">
-                Service Booking
+          Dịch vụ
+        </Link>
+
+        {isLoggedIn && (
+          <>
+            <Link
+              href="/booking"
+              className="text-white text-decoration-none small fw-semibold"
+            >
+              Đặt lịch
             </Link>
-            <nav className="d-flex align-items-center gap-3">
-                <Link href="/login" className="btn btn-light btn-sm fw-semibold">
-                    Đăng nhập
-                </Link>
-            </nav>
-        </header>
-    )
+
+            <Link
+              href="/my-bookings"
+              className="text-white text-decoration-none small fw-semibold"
+            >
+              Lịch của tôi
+            </Link>
+
+            <span className="text-white small fw-semibold">
+              Đã đăng nhập
+            </span>
+          </>
+        )}
+
+        {!isLoggedIn && (
+          <Link
+            href="/login"
+            className="btn btn-light btn-sm fw-semibold"
+          >
+            Đăng nhập
+          </Link>
+        )}
+      </nav>
+    </header>
+  );
 }
