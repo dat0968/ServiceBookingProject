@@ -59,7 +59,7 @@ namespace APIBookingServiceProject.Repositories.BookingRepo
         }
 
         public async Task<bool> IsOverlappingAsync(
-            int staffId,
+            int? staffId,
             DateTime startTime,
             DateTime endTime,
             int? excludeId = null)

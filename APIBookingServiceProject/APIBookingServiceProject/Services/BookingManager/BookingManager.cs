@@ -32,13 +32,9 @@ namespace APIBookingServiceProject.Services.BookingManager
             this.userRepository = userRepository;
         }
 
-        public async Task<BookingResponseDto> CreateAsync(
-            BookingRequestDto dto,
-            int currentUserId,
-            string currentRole)
+        public async Task<BookingResponseDto> CreateAsync(BookingRequestDto dto, int currentUserId, string currentRole)
         {
             BookingHelper.ValidateCreate(dto);
-
             var customerId = ResolveCustomerId(dto, currentUserId, currentRole);
             var customer = await userRepository.GetByIdAsync(customerId);
             if (customer == null)
@@ -57,17 +53,6 @@ namespace APIBookingServiceProject.Services.BookingManager
                 throw new BadRequestException("Không được đặt dịch vụ đang bị khóa.");
             }
 
-            var staff = await employeeRepository.GetByIdAsync(dto.StaffId);
-            if (staff == null)
-            {
-                throw new NotFoundException($"Staff with id {dto.StaffId} not found");
-            }
-
-            if (!staff.IsActive)
-            {
-                throw new BadRequestException("Không đặt lịch với nhân viên bị khóa.");
-            }
-
             var startTime = dto.StartTime;
             var endTime = startTime.AddMinutes(service.DurationMinutes);
 
@@ -76,15 +61,12 @@ namespace APIBookingServiceProject.Services.BookingManager
                 throw new BadRequestException("Không đặt lịch trong quá khứ.");
             }
 
-            await EnsureWithinWorkScheduleAsync(dto.StaffId, startTime, endTime);
-            await EnsureNoOverlapAsync(dto.StaffId, startTime, endTime);
-
             var booking = new Booking
             {
                 BookingCode = await GenerateUniqueBookingCodeAsync(),
                 CustomerId = customerId,
                 ServiceId = dto.ServiceId,
-                StaffId = dto.StaffId,
+                StaffId = null,
                 StartTime = startTime,
                 EndTime = endTime,
                 StatusBooking = BookingHelper.Pending,
@@ -298,7 +280,7 @@ namespace APIBookingServiceProject.Services.BookingManager
             return currentUserId;
         }
 
-        private async Task EnsureWithinWorkScheduleAsync(int staffId, DateTime startTime, DateTime endTime)
+        private async Task EnsureWithinWorkScheduleAsync(int? staffId, DateTime startTime, DateTime endTime)
         {
             var workDate = DateOnly.FromDateTime(startTime);
             if (DateOnly.FromDateTime(endTime) != workDate)
@@ -314,7 +296,7 @@ namespace APIBookingServiceProject.Services.BookingManager
             }
         }
 
-        private async Task EnsureNoOverlapAsync(int staffId, DateTime startTime, DateTime endTime)
+        private async Task EnsureNoOverlapAsync(int? staffId, DateTime startTime, DateTime endTime)
         {
             var isOverlapping = await bookingRepository.IsOverlappingAsync(staffId, startTime, endTime);
             if (isOverlapping)
