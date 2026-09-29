@@ -236,7 +236,7 @@ namespace APIBookingServiceProject.Services.BookingManager
                 throw new BadRequestException("Không hủy booking đã hoàn thành.");
             }
 
-            if (DateTime.Now >= booking.StartTime)
+            if (booking.StatusBooking == BookingHelper.Confirmed)
             {
                 throw new BadRequestException("Không hủy booking đã bắt đầu.");
             }
