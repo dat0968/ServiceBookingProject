@@ -1,7 +1,7 @@
 import { Service } from "@/types/service";
 import { useEffect, useState } from "react";
 import { ServiceQuery } from "@/types/service";
-import { getService } from "@/services/bookingService";
+import { getService } from "@/services/myService";
 export function useServices() {
     const [services, setServices] = useState<Service[]>([]);
     const [search, setSearch] = useState("");

@@ -53,7 +53,7 @@ export default function Services() {
           <>
             <Row className="g-4">
               {services.map((service) => (
-                <Col md={6} lg={4}>
+                <Col md={6} lg={4} key={service.id}>
                   <Card className="h-100 border-0 shadow-sm">
                     <Card.Body className="p-4 d-flex flex-column">
                       <Card.Title className="fw-semibold">{service.nameService}</Card.Title>
