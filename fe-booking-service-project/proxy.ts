@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateToken } from "@/services/authService";
 import axios from "axios";
 console.log("🔥 MIDDLEWARE LOADED");
+const createLoginRedirect = (request: NextRequest) => {
+    const loginUrl = new URL("/login", request.url);
+
+    loginUrl.searchParams.set(
+        "returnUrl",
+        request.nextUrl.pathname + request.nextUrl.search
+    );
+
+    return NextResponse.redirect(loginUrl);
+};
 export async function proxy(request: NextRequest) {
     console.log("🔥 MIDDLEWARE RUN:", request.nextUrl.pathname);
     const { pathname } = request.nextUrl;
@@ -12,16 +22,15 @@ export async function proxy(request: NextRequest) {
     console.log("My token: " + token);
     if (!token) {
         if (isProtectedRoute) {
-            return NextResponse.redirect(new URL("/login", request.url));
+            return createLoginRedirect(request);
         }
         return NextResponse.next();
     }
     try {
         const isValid = await validateToken(token);
-        console.log("isvalie:" + isValid)
         if (!isValid) {
             const response = isProtectedRoute
-                ? NextResponse.redirect(new URL("/login", request.url))
+                ? createLoginRedirect(request)
                 : NextResponse.next();
 
             response.cookies.delete("accessToken");
@@ -37,7 +46,7 @@ export async function proxy(request: NextRequest) {
         console.log("VALIDATE ERROR:", error);
         if (axios.isAxiosError(error) && error.response?.status === 401) {
             const response = isProtectedRoute
-                ? NextResponse.redirect(new URL("/login", request.url))
+                ? createLoginRedirect(request)
                 : NextResponse.next();
 
             response.cookies.delete("accessToken");

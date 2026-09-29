@@ -1,9 +1,9 @@
-import { LoginRequest } from "@/types/auth";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/services/authService";
 export function useAuthForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +24,8 @@ export function useAuthForm() {
 
         try {
             await login({ email: email.trim(), password });
-            router.push("/");
+            const returnUrl = searchParams.get("returnUrl") || "/";
+            router.push(returnUrl);
         } catch {
             setError("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
         } finally {
