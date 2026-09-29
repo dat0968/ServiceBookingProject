@@ -10,7 +10,11 @@ export function useAuthForm() {
     const [error, setError] = useState("");
     const [validated, setValidated] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "success" as "success" | "danger",
+    }); 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -25,7 +29,14 @@ export function useAuthForm() {
         try {
             await login({ email: email.trim(), password });
             const returnUrl = searchParams.get("returnUrl") || "/";
-            router.push(returnUrl);
+            setToast({
+                show: true,
+                message: "Đăng nhập thành công.",
+                type: "success",
+            });
+            setTimeout(() => {
+                router.push(returnUrl);
+            }, 2000)
         } catch {
             setError("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
         } finally {
@@ -44,5 +55,7 @@ export function useAuthForm() {
         validated,
         submitting,
         handleSubmit,
+        toast,
+        setToast
     };
 }

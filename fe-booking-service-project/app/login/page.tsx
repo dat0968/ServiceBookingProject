@@ -2,7 +2,7 @@
 
 import { Alert, Button, Card, Form, InputGroup, Spinner } from "react-bootstrap";
 import { useAuthForm } from "@/hooks/useAuthForm";
-
+import AppToast from "@/components/app-toast";
 export default function Login() {
   const {
     email,
@@ -16,6 +16,8 @@ export default function Login() {
     validated,
     submitting,
     handleSubmit,
+    toast,
+    setToast
   } = useAuthForm();
 
   return (
@@ -107,6 +109,17 @@ export default function Login() {
           </Form>
         </Card.Body>
       </Card>
+      <AppToast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() =>
+          setToast((prev) => ({
+            ...prev,
+            show: false,
+          }))
+        }
+      />
     </div>
   );
 }
