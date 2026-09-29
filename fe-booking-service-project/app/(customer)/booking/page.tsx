@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import AppToast from "@/components/app-toast";
 import useBooking from "@/hooks/useBooking";
 
 const TEAL = "#0f766e";
@@ -18,6 +19,8 @@ export default function BookingPage() {
     handleTimeChange,
     handleNoteChange,
     handleSubmit,
+    toast,
+    setToast
   } = useBooking();
 
   return (
@@ -145,9 +148,15 @@ export default function BookingPage() {
                     background: TEAL,
                   }}
                 >
-                  {submitting
-                    ? "Đang đặt lịch..."
-                    : "Xác nhận đặt lịch"}
+
+                  {submitting ? (
+                    <>
+                      <Spinner animation="border" size="sm" className="me-2" />
+                      Đang đặt lịch...
+                    </>
+                  ) : (
+                    "Xác nhận đặt lịch"
+                  )}
                 </Button>
               </Form>
             </Card.Body>
@@ -203,7 +212,7 @@ export default function BookingPage() {
               {/* Time */}
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-secondary">
-                  Thời gian
+                  Thời gian bắt đầu
                 </span>
 
                 <span>
@@ -225,8 +234,8 @@ export default function BookingPage() {
                 >
                   {selectedService
                     ? `${selectedService.price.toLocaleString(
-                        "vi-VN"
-                      )} đ`
+                      "vi-VN"
+                    )} đ`
                     : "-"}
                 </span>
               </div>
@@ -234,6 +243,17 @@ export default function BookingPage() {
           </Card>
         </Col>
       </Row>
+      <AppToast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() =>
+          setToast((prev) => ({
+            ...prev,
+            show: false,
+          }))
+        }
+      />
     </Container>
   );
 }
