@@ -9,8 +9,8 @@ namespace APIBookingServiceProject.DTOs.BookingDTO
         public string CustomerEmail { get; set; } = null!;
         public int ServiceId { get; set; }
         public string ServiceName { get; set; } = null!;
-        public int StaffId { get; set; }
-        public string StaffName { get; set; } = null!;
+        public int? StaffId { get; set; }
+        public string? StaffName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string StatusBooking { get; set; } = null!;

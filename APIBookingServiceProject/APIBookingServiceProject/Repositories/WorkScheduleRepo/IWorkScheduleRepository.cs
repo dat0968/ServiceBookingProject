@@ -16,6 +16,6 @@ namespace APIBookingServiceProject.Repositories.WorkScheduleRepo
         Task DeleteAsync(int id);
         Task<bool> IsOverlappingAsync(int staffId, DateOnly workDate,TimeOnly startTime, 
             TimeOnly endTime,int? excludeId = null);
-        Task<List<WorkSchedule>> GetByStaffAndDateAsync(int staffId, DateOnly workDate);
+        Task<List<WorkSchedule>> GetByStaffAndDateAsync(int? staffId, DateOnly workDate);
     }
 }

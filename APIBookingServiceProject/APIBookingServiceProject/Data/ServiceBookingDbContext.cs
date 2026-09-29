@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using APIBookingServiceProject.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace APIBookingServiceProject.Models;
+namespace APIBookingServiceProject.Data;
 
 public partial class ServiceBookingDbContext : DbContext
 {

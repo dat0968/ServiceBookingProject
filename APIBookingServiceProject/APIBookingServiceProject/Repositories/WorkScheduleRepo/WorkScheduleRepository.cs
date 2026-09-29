@@ -65,7 +65,7 @@ namespace APIBookingServiceProject.Repositories.WorkScheduleRepo
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<WorkSchedule>> GetByStaffAndDateAsync(int staffId, DateOnly workDate)
+        public async Task<List<WorkSchedule>> GetByStaffAndDateAsync(int? staffId, DateOnly workDate)
         {
             return await dbContext.WorkSchedules
                 .AsNoTracking()
