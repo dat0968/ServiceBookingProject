@@ -13,7 +13,7 @@ public partial class Booking
 
     public int ServiceId { get; set; }
 
-    public int StaffId { get; set; }
+    public int? StaffId { get; set; }
 
     public DateTime StartTime { get; set; }
 
@@ -31,5 +31,5 @@ public partial class Booking
 
     public virtual MyService Service { get; set; } = null!;
 
-    public virtual Staff Staff { get; set; } = null!;
+    public virtual Staff? Staff { get; set; }
 }

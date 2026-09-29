@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using APIBookingServiceProject.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace APIBookingServiceProject.Data;
+namespace APIBookingServiceProject.Models;
 
 public partial class ServiceBookingDbContext : DbContext
 {
@@ -54,7 +53,6 @@ public partial class ServiceBookingDbContext : DbContext
 
             entity.HasOne(d => d.Staff).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.StaffId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Bookings_Staffs");
         });
 
