@@ -131,6 +131,7 @@ export default function useWorkScheduleAdmin() {
                     editingId,
                     request
                 );
+                console.log(request);
             } else {
                 await createWorkSchedule(request);
             }

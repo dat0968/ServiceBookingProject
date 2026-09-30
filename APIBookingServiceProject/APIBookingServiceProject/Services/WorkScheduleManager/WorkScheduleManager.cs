@@ -124,13 +124,15 @@ namespace APIBookingServiceProject.Services.WorkScheduleManager
                     $"Staff with id {workScheduleRequestDto.StaffId} is locked or not found"
                 );
             }
-
+            var staff = await _employeeRepository.GetByIdAsync(workScheduleRequestDto.StaffId);
             workSchedule.StaffId = workScheduleRequestDto.StaffId;
             workSchedule.WorkDate = workScheduleRequestDto.WorkDate;
             workSchedule.StartTime = workScheduleRequestDto.StartTime;
             workSchedule.EndTime = workScheduleRequestDto.EndTime;
-
+            workSchedule.Staff = staff!;
             await _workScheduleRepository.UpdateAsync(workSchedule);
+
+
             return WorkScheduleHelper.MapToResponseDto(workSchedule);
         }
         public async Task<bool> isExistStaff(WorkScheduleRequestDto workScheduleRequestDto)
