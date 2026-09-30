@@ -1,7 +1,9 @@
-﻿using APIBookingServiceProject.DTOs.WorkScheduleDTO;
+﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
+using APIBookingServiceProject.DTOs.WorkScheduleDTO;
 using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
+using APIBookingServiceProject.Repositories.BookingRepo;
 using APIBookingServiceProject.Repositories.EmployeeRepo;
 using APIBookingServiceProject.Repositories.WorkScheduleRepo;
 namespace APIBookingServiceProject.Services.WorkScheduleManager
@@ -10,10 +12,12 @@ namespace APIBookingServiceProject.Services.WorkScheduleManager
     {
         private readonly IWorkScheduleRepository _workScheduleRepository;
         private readonly IEmployeeRepository _employeeRepository;
-        public WorkScheduleManager(IWorkScheduleRepository _workScheduleRepository, IEmployeeRepository _employeeRepository)
+        private readonly IBookingRepository _bookingRepository;
+        public WorkScheduleManager(IWorkScheduleRepository _workScheduleRepository, IEmployeeRepository _employeeRepository, IBookingRepository _bookingRepository)
         {
             this._workScheduleRepository = _workScheduleRepository;
             this._employeeRepository = _employeeRepository;
+            this._bookingRepository = _bookingRepository;
         }
         public async Task<WorkScheduleResponseDto> CreateAsync(WorkScheduleRequestDto workScheduleRequestDto)
         {

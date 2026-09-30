@@ -71,7 +71,14 @@ namespace APIBookingServiceProject.Controllers
             var result = await bookingManager.CancelAsync(id, dto, GetCurrentUserId(), GetCurrentRole());
             return Ok(result);
         }
+        [HttpGet("{id}/suggested-staff")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetSuggestedStaff(int id)
+        {
+            var result = await bookingManager.GetSuggestedStaffAsync(id);
 
+            return Ok(result);
+        }
         private int GetCurrentUserId()
         {
             return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

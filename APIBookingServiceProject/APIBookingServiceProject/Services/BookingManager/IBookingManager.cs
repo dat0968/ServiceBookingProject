@@ -1,4 +1,6 @@
 using APIBookingServiceProject.DTOs.BookingDTO;
+using APIBookingServiceProject.DTOs.EmployeeDTO;
+using APIBookingServiceProject.Models;
 
 namespace APIBookingServiceProject.Services.BookingManager
 {
@@ -11,5 +13,6 @@ namespace APIBookingServiceProject.Services.BookingManager
         Task<List<AvailableSlotResponseDto>> GetAvailableSlotsAsync(AvailableSlotQueryDto query);
         Task<BookingResponseDto> UpdateStatusAsync(int id, UpdateBookingStatusDto dto);
         Task<BookingResponseDto> CancelAsync(int id, CancelBookingRequestDto dto, int currentUserId, string currentRole);
+        Task<List<EmployeeResponseDto>> GetSuggestedStaffAsync(int bookingId);
     }
 }

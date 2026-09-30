@@ -1,4 +1,6 @@
-﻿using APIBookingServiceProject.DTOs.WorkScheduleDTO;
+﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
+using APIBookingServiceProject.DTOs.WorkScheduleDTO;
+using APIBookingServiceProject.Models;
 
 namespace APIBookingServiceProject.Services.WorkScheduleManager
 {

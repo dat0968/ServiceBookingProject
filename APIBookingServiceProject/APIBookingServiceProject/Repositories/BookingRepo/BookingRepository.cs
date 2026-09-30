@@ -126,5 +126,33 @@ namespace APIBookingServiceProject.Repositories.BookingRepo
 
             return query;
         }
+
+        public async Task<List<Staff>> GetSuggestedStaffAsync(Booking booking)
+        {
+            var bookingDate = DateOnly.FromDateTime(booking.StartTime);
+            var bookingStart = TimeOnly.FromDateTime(booking.StartTime);
+            var bookingEnd = TimeOnly.FromDateTime(booking.EndTime);
+
+            return await dbContext.Staffs.AsNoTracking().Where(staff => staff.IsActive &&
+                    // Có lịch làm việc phù hợp với booking
+                    dbContext.WorkSchedules.Any(ws =>
+                        ws.StaffId == staff.Id &&
+                        ws.WorkDate == bookingDate &&
+                        ws.StartTime <= bookingStart &&
+                        ws.EndTime >= bookingEnd
+                    ) &&
+                    // Không có booking khác đang chiếm thời gian
+                    !dbContext.Bookings.Any(b =>
+                        b.StaffId == staff.Id &&
+                        b.Id != booking.Id &&
+                        b.StatusBooking != "Completed" &&
+                        b.StatusBooking != "Cancelled" &&
+                        // Kiểm tra overlap thời gian
+                        b.StartTime < booking.EndTime &&
+                        b.EndTime > booking.StartTime
+                    )
+                )
+                .ToListAsync();
+        }
     }
 }

@@ -1,4 +1,5 @@
 using APIBookingServiceProject.DTOs.BookingDTO;
+using APIBookingServiceProject.DTOs.EmployeeDTO;
 using APIBookingServiceProject.Exceptions;
 using APIBookingServiceProject.Helper;
 using APIBookingServiceProject.Models;
@@ -202,7 +203,7 @@ namespace APIBookingServiceProject.Services.BookingManager
             {
                 throw new BadRequestException("Chỉ hoàn thành được booking chưa bị hủy.");
             }
-
+            booking.StaffId = dto.staffId;
             booking.StatusBooking = newStatus;
             await bookingRepository.UpdateAsync(booking);
 
@@ -280,21 +281,22 @@ namespace APIBookingServiceProject.Services.BookingManager
             return currentUserId;
         }
 
-        private async Task EnsureWithinWorkScheduleAsync(int? staffId, DateTime startTime, DateTime endTime)
-        {
-            var workDate = DateOnly.FromDateTime(startTime);
-            if (DateOnly.FromDateTime(endTime) != workDate)
-            {
-                throw new BadRequestException("Booking phải nằm trong cùng một ngày làm việc.");
-            }
+        //private async Task<List<EmployeeResponseDto>> EnsureWithinWorkScheduleAsync(int? staffId, DateTime startTime, DateTime endTime)
+        //{
+        //    //var workDate = DateOnly.FromDateTime(startTime);
+        //    //if (DateOnly.FromDateTime(endTime) != workDate)
+        //    //{
+        //    //    throw new BadRequestException("Booking phải nằm trong cùng một ngày làm việc.");
+        //    //}
 
-            var schedules = await workScheduleRepository.GetByStaffAndDateAsync(staffId, workDate);
-            var isInside = schedules.Any(s => BookingHelper.IsWithinWorkSchedule(startTime, endTime, s));
-            if (!isInside)
-            {
-                throw new BadRequestException("Booking phải nằm hoàn toàn trong giờ làm việc.");
-            }
-        }
+        //    var schedules = await workScheduleRepository.GetAllAsync();
+        //    var filterScheduleByTime = schedules.Where(s => BookingHelper.IsWithinWorkSchedule(startTime, endTime, s));
+            
+        //    //if (!isInside)
+        //    //{
+        //    //    throw new BadRequestException("Booking phải nằm hoàn toàn trong giờ làm việc.");
+        //    //}
+        //}
 
         private async Task EnsureNoOverlapAsync(int? staffId, DateTime startTime, DateTime endTime)
         {
@@ -343,6 +345,19 @@ namespace APIBookingServiceProject.Services.BookingManager
             {
                 query.PageSize = 10;
             }
+        }
+
+        public async Task<List<EmployeeResponseDto>> GetSuggestedStaffAsync(int bookingId)
+        {
+            var existingBooking = await bookingRepository.GetByIdAsync(bookingId);
+            if(existingBooking == null)
+            {
+                throw new NotFoundException(
+                    $"Booking with id {bookingId} not found."
+                );
+            }
+            var listStaff = await bookingRepository.GetSuggestedStaffAsync(existingBooking);
+            return listStaff.Select(staff => StaffHelper.MapToResponseDto(staff)).ToList();
         }
     }
 }

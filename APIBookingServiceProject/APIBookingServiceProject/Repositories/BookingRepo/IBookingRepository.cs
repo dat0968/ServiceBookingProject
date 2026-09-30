@@ -17,5 +17,6 @@ namespace APIBookingServiceProject.Repositories.BookingRepo
         Task<bool> IsOverlappingAsync(int? staffId, DateTime startTime, DateTime endTime, int? excludeId = null);
         Task<List<Booking>> GetActiveByStaffAndDateAsync(int staffId, DateOnly date);
         Task<bool> ExistsBookingCodeAsync(string bookingCode);
+        Task<List<Staff>> GetSuggestedStaffAsync(Booking booking);
     }
 }

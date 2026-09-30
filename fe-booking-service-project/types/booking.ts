@@ -12,21 +12,21 @@ export interface BookingRequest {
 }
 
 export interface Booking {
-  id: number;
-  bookingCode: string;
-  customerId: number;
-  customerName: string;
-  customerEmail: string;
-  serviceId: number;
-  serviceName: string;
-  staffId: number | null;
-  staffName: string | null;
-  startTime: string;
-  endTime: string;
-  statusBooking: string;
-  customerNote: string | null;
-  cancellationReason: string | null;
-  createdAt: string;
+    id: number;
+    bookingCode: string;
+    customerId: number;
+    customerName: string;
+    customerEmail: string;
+    serviceId: number;
+    serviceName: string;
+    staffId: number | null;
+    staffName: string | null;
+    startTime: string;
+    endTime: string;
+    statusBooking: string;
+    customerNote: string | null;
+    cancellationReason: string | null;
+    createdAt: string;
 }
 export interface BookingResponse {
     data: Booking[];
@@ -43,4 +43,8 @@ export interface BookingQuery {
 }
 export interface CancelBookingRequest {
     cancellationReason: string;
+}
+export interface StatusBookingRequest {
+    staffId: number;
+    status: string;
 }
