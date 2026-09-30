@@ -14,7 +14,7 @@ export function useAuthForm() {
         show: false,
         message: "",
         type: "success" as "success" | "danger",
-    }); 
+    });
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -27,7 +27,7 @@ export function useAuthForm() {
         setSubmitting(true);
 
         try {
-            await login({ email: email.trim(), password });
+            const response = await login({ email: email.trim(), password });
             const returnUrl = searchParams.get("returnUrl") || "/";
             setToast({
                 show: true,
@@ -35,7 +35,13 @@ export function useAuthForm() {
                 type: "success",
             });
             setTimeout(() => {
-                router.push(returnUrl);
+                // router.push(returnUrl);
+                if (response.role == 'Customer') {
+                    router.push(returnUrl);
+                }
+                else{
+                    router.push('/admin/services');
+                }
             }, 2000)
         } catch {
             setError("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");
