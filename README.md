@@ -3,49 +3,40 @@
 Hệ thống quản lý đặt lịch dịch vụ (full-stack): khách hàng đặt lịch theo dịch vụ và thời gian; admin quản lý dịch vụ, nhân viên, lịch làm việc và booking.
 
 ---
+## 1. Tài khoản demo
+Admin -> email: admin@demo.com - padsword: admin@123
+Customer -> email: customer1@demo.com - password: customer@123
 
 ## 2. Tổng quan
 
-Project giải quyết bài toán đặt lịch sử dụng dịch vụ: Customer tạo / xem / hủy booking của mình; Admin quản lý danh mục và xử lý trạng thái booking. **Không có tích hợp thanh toán.** Không có luồng đăng nhập cho vai trò Staff (nhân viên là entity do Admin quản lý, tách khỏi `User`).
+Project giải quyết bài toán đặt lịch sử dụng dịch vụ: Customer tạo / xem / hủy booking của mình; Admin quản lý danh mục và xử lý trạng thái booking.
 
 ### Vai trò trong source
 
 | Vai trò | Mô tả (theo code) |
 |---|---|
-| **Customer** | Đăng nhập, xem dịch vụ, tạo booking, xem/lọc/hủy booking của mình (`GET /api/bookings/my-bookings`, `POST /api/bookings/{id}/cancel`). |
+| **Customer** | Đăng nhập, xem dịch vụ, tạo booking, xem/lọc/hủy booking của mình. |
 | **Admin** | Quản lý dịch vụ, nhân viên, lịch làm việc, danh sách toàn bộ booking; xác nhận / hoàn thành / hủy; gợi ý nhân viên khi đổi trạng thái. |
-| **Staff (entity)** | Không phải role đăng nhập. Bảng `Staffs` dùng cho lịch làm việc và gán vào booking. |
 
-Role hợp lệ khi tạo/cập nhật user: `Admin`, `Customer` (`UserHelper.AllowedRoles`).
+Role hợp lệ khi tạo/cập nhật user: `Admin`, `Customer`
 
 ### Chức năng đã hoàn thành
 
 - Đăng nhập JWT, gắn cookie HttpOnly `accessToken`; đăng xuất; `GET /api/auth/me`; `GET /api/auth/validate`.
 - CRUD + khóa/mở dịch vụ (Admin); danh sách dịch vụ có search theo tên và phân trang tại database.
-- CRUD + khóa/mở nhân viên; tìm nhân viên theo tên/email (không phân trang).
-- CRUD lịch làm việc (Admin): `StartTime` phải nhỏ hơn `EndTime`; chống trùng ca cùng nhân viên cùng ngày (409).
+- CRUD + khóa/mở nhân viên; tìm nhân viên theo tên/email.
+- CRUD lịch làm việc (Admin): `StartTime` phải nhỏ hơn `EndTime`; chống trùng ca cùng nhân viên cùng ngày.
 - Customer tạo booking: backend tính `EndTime = StartTime + DurationMinutes`; từ chối dịch vụ bị khóa; từ chối đặt trong quá khứ; sinh `BookingCode` unique; trạng thái ban đầu `Pending`.
-- Customer xem booking của mình (lọc ngày, trạng thái, phân trang); chỉ xem/hủy booking thuộc về mình (403 nếu không).
-- Admin xem toàn bộ booking (lọc ngày, trạng thái, phân trang); `PATCH` trạng thái `Confirmed` / `Completed`; gán `StaffId` khi cập nhật trạng thái; `GET .../suggested-staff`.
-- Hủy booking: bắt buộc lý do; không hủy `Cancelled` / `Completed`; không hủy `Confirmed` (code coi Confirmed là “đã bắt đầu”); Customer không được tự xác nhận/hoàn thành (`PATCH status` chỉ Admin).
-- API `GET /api/bookings/available-slots` (theo `StaffId`, `ServiceId`, `Date`) — **frontend đặt lịch hiện không gọi endpoint này**.
+- Customer xem booking của mình (lọc ngày, trạng thái, phân trang); chỉ xem/hủy booking thuộc về mình.
+- Admin xem toàn bộ booking (lọc ngày, trạng thái, phân trang); `PATCH` trạng thái `Confirmed` / `Completed`; gán `StaffId` khi cập nhật trạng thái;
+- Hủy booking: bắt buộc lý do; không hủy `Cancelled` / `Completed`; không hủy `Confirmed` (code coi Confirmed là “đã bắt đầu”);
 - Swagger UI khi `ASPNETCORE_ENVIRONMENT=Development`.
 - Màn hình: `/`, `/login`, `/services`, `/booking`, `/my-bookings`, `/admin/services`, `/admin/schedules`, `/admin/bookings`, `/admin/staffs`.
-- Xử lý exception tập trung (`GlobalExceptionHandler`); mật khẩu hash bằng `PasswordHasher<User>`; DTO không trả `PasswordHash`.
+- Xử lý exception tập trung (`GlobalExceptionHandler`).
 
 ### Chức năng / hạng mục chưa hoàn thành (đối chiếu đề bài)
 
 - **Mục 12 đề bài (phần cộng điểm) — chưa làm:** unit/integration test; Docker Compose; SignalR; Hangfire; xử lý hai request đặt cùng khung giờ; giao diện lịch trực quan. Trang lịch làm việc Admin là **bảng**, không phải calendar.
-- Đăng ký / quên mật khẩu: không có (đề bài không bắt buộc).
-- Màn hình `/booking`: Customer chọn dịch vụ, ngày, giờ, ghi chú — **không chọn nhân viên, không load khung giờ trống**.
-- Khi `CreateAsync` booking: `StaffId` được gán `null`; `EnsureNoOverlapAsync` **không được gọi**; không kiểm tra booking nằm trong giờ làm việc lúc tạo.
-- Không có folder `Migrations`, không có SQL script, không có seeder trong source.
-- Không có Postman collection; file `APIBookingServiceProject.http` còn template `weatherforecast` (không phải API hiện tại).
-- `GET /api/staffs/{id}/schedules` **không tồn tại**; lịch làm việc đi qua `/api/WorkSchedule`.
-- `StaffController` và `UserController` **không gắn `[Authorize]`**.
-- `proxy.ts` chỉ bảo vệ `/admin/:path*` và `/login`; `/booking` và `/my-bookings` không nằm trong matcher.
-
----
 
 ## 3. Công nghệ sử dụng
 
@@ -120,8 +111,6 @@ ServiceBookingProject/
 
 ## 6. Chức năng chính
 
-### Frontend
-
 | Đường dẫn | Nội dung trong code |
 |---|---|
 | `/` | Landing: giới thiệu + link dịch vụ / đặt lịch |
@@ -134,15 +123,6 @@ ServiceBookingProject/
 | `/admin/schedules` | Quản lý lịch làm việc (bảng) |
 | `/admin/bookings` | Quản lý booking, đổi trạng thái, gợi ý staff, hủy |
 
-### Backend (ngoài UI)
-
-- CRUD user: `UserController` (list có search + phân trang). **Không có màn hình frontend** gọi các API này (đã grep).
-- `GET /api/bookings/available-slots`: tính slot theo ca làm việc, loại slot quá khứ và overlap với booking chưa `Cancelled`.
-
-Trạng thái booking trong helper: `Pending`, `Confirmed`, `Completed`, `Cancelled`.
-
----
-
 ## 7. API
 
 Authentication: cookie HttpOnly `accessToken` (và/hoặc Bearer). Cột dưới ghi đúng attribute trên action/controller.
@@ -151,19 +131,10 @@ Authentication: cookie HttpOnly `accessToken` (và/hoặc Bearer). Cột dưới
 
 | Method | Endpoint | Mô tả | Authentication |
 |---|---|---|---|
-| POST | `/api/auth/login` | Đăng nhập, set cookie, trả **User** (không trả token trong body) | `[AllowAnonymous]` |
+| POST | `/api/auth/login` | Đăng nhập, set cookie, trả **User**| `[AllowAnonymous]` |
 | GET | `/api/auth/validate` | Kiểm tra token còn hợp lệ | `[Authorize]` |
 | POST | `/api/auth/logout` | Xóa cookie `accessToken` | Không gắn `[Authorize]` |
 | GET | `/api/auth/me` | User hiện tại theo claim `NameIdentifier` | `[Authorize]` |
-
-Login body:
-
-```json
-{
-  "email": "user@example.com",
-  "password": "YOUR_PASSWORD"
-}
-```
 
 ### Dịch vụ — `/api/MyService`
 
@@ -175,19 +146,15 @@ Login body:
 | PUT | `/api/MyService/{id}` | Cập nhật | `[Authorize(Roles = "Admin")]` |
 | PATCH | `/api/MyService/{id}/status` | Đổi `isActive` (query `isActive`) | `[Authorize(Roles = "Admin")]` |
 
-Tạo/sửa body: `nameService`, `descriptionService`, `durationMinutes`, `price`.
-
 ### Nhân viên — `/api/Staff`
 
 | Method | Endpoint | Mô tả | Authentication |
 |---|---|---|---|
-| POST | `/api/Staff` | Tạo nhân viên | Không `[Authorize]` |
-| GET | `/api/Staff` | Danh sách, query `search` | Không |
-| GET | `/api/Staff/{id}` | Chi tiết | Không |
-| PUT | `/api/Staff/{id}` | Cập nhật | Không |
-| PATCH | `/api/Staff/{id}/status` | Đổi `isActive` (query `isActive`) | Không |
-
-Body: `fullName`, `email`, `isActive`.
+| POST | `/api/Staff` | Tạo nhân viên | `[Authorize(Roles = "Admin")]` |
+| GET | `/api/Staff` | Danh sách, query `search` | `[Authorize(Roles = "Admin")] |
+| GET | `/api/Staff/{id}` | Chi tiết | `[Authorize(Roles = "Admin")] |
+| PUT | `/api/Staff/{id}` | Cập nhật | `[Authorize(Roles = "Admin")] |
+| PATCH | `/api/Staff/{id}/status` | Đổi `isActive` (query `isActive`) | `[Authorize(Roles = "Admin")] |
 
 ### Lịch làm việc — `/api/WorkSchedule`
 
@@ -195,33 +162,21 @@ Controller gắn `[Authorize(Roles = "Admin")]`.
 
 | Method | Endpoint | Mô tả | Authentication |
 |---|---|---|---|
-| GET | `/api/WorkSchedule` | Tất cả lịch (không phân trang) | Admin |
+| GET | `/api/WorkSchedule` | Tất cả lịch | Admin |
 | GET | `/api/WorkSchedule/{id}` | Chi tiết | Admin |
 | POST | `/api/WorkSchedule` | Tạo ca | Admin |
 | PUT | `/api/WorkSchedule/{id}` | Cập nhật | Admin |
 | DELETE | `/api/WorkSchedule/{id}` | Xóa (`204`) | Admin |
 
-```json
-{
-  "staffId": 1,
-  "workDate": "2026-10-01",
-  "startTime": "08:00:00",
-  "endTime": "17:00:00"
-}
-```
-
 ### User — `/api/User`
-
-Không gắn `[Authorize]`.
 
 | Method | Endpoint | Mô tả | Authentication |
 |---|---|---|---|
-| GET | `/api/User` | Query `Search`, `Page`, `PageSize` | Không |
-| GET | `/api/User/{id}` | Chi tiết | Không |
-| POST | `/api/User` | Tạo user | Không |
-| PUT | `/api/User/{id}` | Cập nhật (`password` tùy chọn) | Không |
+| GET | `/api/User` | Query `Search`, `Page`, `PageSize` | `[Authorize(Roles = "Admin")] |
+| GET | `/api/User/{id}` | Chi tiết | `[Authorize(Roles = "Admin")] |
+| POST | `/api/User` | Tạo user | `[Authorize(Roles = "Admin")] |
+| PUT | `/api/User/{id}` | Cập nhật (`password` tùy chọn) | `[Authorize(Roles = "Admin")] |
 
-Tạo: `email`, `password`, `fullName`, `role`.
 
 ### Booking — `/api/bookings`
 
@@ -236,68 +191,12 @@ Tạo: `email`, `password`, `fullName`, `role`.
 | POST | `/api/bookings/{id}/cancel` | Hủy | `[Authorize(Roles = "Customer,Admin")]` |
 | GET | `/api/bookings/{id}/suggested-staff` | Staff rảnh theo lịch + không overlap | `[Authorize(Roles = "Admin")]` |
 
-Tạo booking:
-
-```json
-{
-  "customerId": 2,
-  "serviceId": 1,
-  "staffId": 1,
-  "startTime": "2026-10-01T09:00:00",
-  "customerNote": "Ghi chú (tuỳ chọn)"
-}
-```
-
-`customerId` bắt buộc khi caller là Admin. Frontend Customer chỉ gửi `serviceId`, `startTime`, `customerNote`.
-
-Cập nhật trạng thái:
-
-```json
-{
-  "staffId": 1,
-  "status": "Confirmed"
-}
-```
-
-Hủy:
-
-```json
-{
-  "cancellationReason": "Lý do hủy"
-}
-```
-
----
-
 ## 8. Database
 
 - Provider: **SQL Server** (`UseSqlServer`).
 - Catalog trong `appsettings.json`: **`ServiceBookingDb`**.
 - Runtime: `Program.cs` đọc `ConnectionStrings:DefaultConnection`.
 - `ServiceBookingDbContext.OnConfiguring` còn chuỗi kết nối hard-code (thiết kế/scaffold). Nên đưa hết credential ra User Secrets / `appsettings` local, **không commit**.
-
-### Entity / bảng chính
-
-| Entity | DbSet | Ghi chú |
-|---|---|---|
-| `User` | `Users` | Email unique `UQ_Users_Email`; `Role`; `PasswordHash`; `CreatedAt` |
-| `MyService` | `MyServices` | PK tên `PK_Services`; tên, mô tả, duration, giá, `IsActive` |
-| `Staff` | `Staffs` | `FullName`, `Email`, `IsActive` — **không có unique index Email trong Fluent API** |
-| `WorkSchedule` | `WorkSchedules` | `StaffId`, `WorkDate`, `StartTime`, `EndTime` |
-| `Booking` | `Bookings` | `BookingCode` unique; `StaffId` nullable; `StatusBooking` |
-
-### Quan hệ
-
-- `Booking.CustomerId` → `User` (`FK_Bookings_Users`)
-- `Booking.ServiceId` → `MyService` (`FK_Bookings_Services`)
-- `Booking.StaffId` → `Staff` (`FK_Bookings_Staffs`, optional)
-- `WorkSchedule.StaffId` → `Staff` (`FK_WorkSchedules_Staffs`)
-
-### Migration
-
-**Không có** `Migrations/` và **không có** SQL script trong repo. Không có lệnh seed trong `Program.cs`. Cần tự tạo database/schema (SQL Server / scaffold hiện có) rồi trỏ connection string.
-
----
 
 ## 9. Authentication & Authorization
 
@@ -306,7 +205,7 @@ Hủy:
 - Endpoint: `POST /api/auth/login`.
 - Verify: `PasswordHasher<User>.VerifyHashedPassword`.
 - Sai email/mật khẩu: `UnauthorizedException` → **401**.
-- Response HTTP: **chỉ `UserResponseDto`** (`Ok(result.User)`). Token không nằm trong JSON body.
+- Response HTTP: **chỉ `UserResponseDto`** (`Ok(result.User)`)
 
 ### JWT
 
@@ -325,25 +224,8 @@ Hủy:
 
 - Tên cookie: **`accessToken`**.
 - `HttpOnly = true`, `Secure = true`, `SameSite = None`, `Path = /`.
-- **Không** thấy `localStorage` cho token trên frontend.
 - Axios: `withCredentials: true`.
 - Interceptor: HTTP 401 → redirect `/login?returnUrl=...`.
-
-### Frontend
-
-- `proxy.ts`: matcher `/login`, `/admin/:path*`. Không cookie / token invalid → redirect login (với route admin). Token hợp lệ + đang ở `/login` → redirect `/`.
-- Header Customer: hiện link đặt lịch / lịch của tôi nếu Next `cookies()` có `accessToken`.
-- `logoutAction`: xóa cookie phía Next rồi redirect `/login`.
-- Admin sidebar: `POST https://localhost:7204/api/auth/logout` + `credentials: "include"`.
-- Sau login: `role == 'Customer'` → `returnUrl` hoặc `/`; ngược lại → `/admin/services`.
-
-### Backend
-
-- `[Authorize]` / `[Authorize(Roles = "...")]` trên từng action như bảng API.
-- Booking: `ForbiddenException` nếu Customer xem/hủy booking người khác.
-- `PATCH .../status` chỉ Admin.
-
----
 
 ## 10. Exception Handling
 
@@ -484,17 +366,7 @@ npm run dev
 
 ---
 
-## 15. Database setup
-
-1. Cài SQL Server, tạo database (tên khớp connection, ví dụ `ServiceBookingDb`).
-2. Gán `ConnectionStrings:DefaultConnection` (User Secrets hoặc appsettings local).
-3. **Không** có `dotnet ef database update` trong repo vì **không có migration**.
-4. Schema hiện mô tả trong `ServiceBookingDbContext.OnModelCreating`.
-5. **Không có seeder** trong source. Tài khoản demo **không nằm trong code** — cần tự tạo user (API `POST /api/User` hoặc insert DB với `PasswordHash` của `PasswordHasher<User>`).
-
----
-
-## 16. Security Notes
+## 15. Security Notes
 
 - Không commit password, JWT secret, connection string có credential.
 - Local: dùng **.NET User Secrets**.
@@ -502,29 +374,6 @@ npm run dev
 - `StaffController` / `UserController` không `[Authorize]` — không expose API này ra internet mà không bổ sung bảo vệ.
 - `NODE_TLS_REJECT_UNAUTHORIZED=0` chỉ local.
 - JWT không validate issuer/audience.
-
----
-
-## 17. Git / `.gitignore`
-
-**Root** `.gitignore` đã loại: `node_modules/`, `.next/`, `bin/`, `obj/`, `.env`, `.env.*` (giữ `!.env.example`), `appsettings.*.local.json`, `coverage/`, `.vs/`, v.v.
-
-**Frontend** `.gitignore`: `node_modules`, `.next`, `.env*`, `coverage`, `.vercel`, ...
-
-Nên **không commit**:
-
-- Connection string / JWT thật trong `appsettings.json`
-- `secrets.json` (User Secrets — thường ngoài repo)
-- `.env` chứa secret
-- `bin/`, `obj/`, `.next/`, `node_modules/`
-
-Root **không** ignore `appsettings.json` — giữ file đó sạch placeholder.
-
----
-
-## 18. License
-
-License: **Not specified** (không có file LICENSE trong repo).
 
 ---
 
