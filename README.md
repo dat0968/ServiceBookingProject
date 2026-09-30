@@ -4,7 +4,7 @@ Hệ thống quản lý đặt lịch dịch vụ (full-stack): khách hàng đ�
 
 ---
 ## 1. Tài khoản demo
-Admin -> email: admin@demo.com - padsword: admin@123
+Admin -> email: admin@demo.com - password: admin@123
 Customer -> email: customer1@demo.com - password: customer@123
 
 ## 2. Tổng quan
@@ -39,6 +39,8 @@ Role hợp lệ khi tạo/cập nhật user: `Admin`, `Customer`
 - **Mục 12 đề bài (phần cộng điểm) — chưa làm:** unit/integration test; Docker Compose; SignalR; Hangfire; xử lý hai request đặt cùng khung giờ; giao diện lịch trực quan. Trang lịch làm việc Admin là **bảng**, không phải calendar.
 
 ## 3. Công nghệ sử dụng
+### Database 
+Restore file ServiceBookingDb.back hoặc execute file ServiceBookingQuery.sql được đặt trong folder Database (/ServiceBookingProject/Database) vào MS SQL SERVER
 
 ### Backend (`APIBookingServiceProject`)
 
