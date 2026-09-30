@@ -54,5 +54,6 @@ export function useServices() {
         error,
         handleSearch,
         handlePageChange,
+        fetchServices,
     };
 }

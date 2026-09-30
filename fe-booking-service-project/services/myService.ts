@@ -14,7 +14,7 @@ export const createService = async (data: ServiceRequest): Promise<ServiceRespon
     const response = await api.post<ServiceResponse>(`/MyService`, data)
     return response.data;
 }
-export const updateService = async (id: string, data: ServiceRequest): Promise<ServiceResponse> => {
+export const updateService = async (id: number, data: ServiceRequest): Promise<ServiceResponse> => {
     const response = await api.put<ServiceResponse>(`/MyService/${id}`, data)
     return response.data;
 }

@@ -13,6 +13,7 @@ export default function Services() {
     error,
     handleSearch,
     handlePageChange,
+    fetchServices,
   } = useServices();
 
   let items = [];
