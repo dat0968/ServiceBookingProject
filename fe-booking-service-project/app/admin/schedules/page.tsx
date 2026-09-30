@@ -1,10 +1,33 @@
 "use client";
 
-import { Button, Card, Col, Form, Modal, Row, Table } from "react-bootstrap";
-
+import { Alert, Spinner, Button, Card, Col, Form, Modal, Row, Table } from "react-bootstrap";
+import useWorkScheduleAdmin from "@/hooks/useWorkScheduleAdmin";
+import AppToast from "@/components/app-toast";
 const TEAL = "#0f766e";
 
 export default function AdminSchedulesPage() {
+  const {
+    schedules,
+    loading,
+    error,
+    fetchSchedules,
+    staffs,
+    staffsLoading,
+    fetchStaffs,
+    showModal,
+    isEditing,
+    form,
+    submitting,
+    formError,
+    handleAdd,
+    handleEdit,
+    handleClose,
+    handleChange,
+    handleSubmit,
+    handleDelete,
+    toast,
+    setToast
+  } = useWorkScheduleAdmin();
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
@@ -14,33 +37,10 @@ export default function AdminSchedulesPage() {
           </h1>
           <p className="text-secondary mb-0">Gán ca làm cho nhân viên theo ngày.</p>
         </div>
-        <Button className="border-0 fw-semibold" style={{ background: TEAL }}>
+        <Button onClick={handleAdd} className="border-0 fw-semibold" style={{ background: TEAL }}>
           Thêm lịch
         </Button>
       </div>
-
-      <Card className="border-0 shadow-sm mb-4" style={{ borderRadius: 16 }}>
-        <Card.Body className="p-3 p-md-4">
-          <Row className="g-3 align-items-end">
-            <Col md={6}>
-              <Form.Group controlId="filterStaff">
-                <Form.Label>Nhân viên</Form.Label>
-                <Form.Select defaultValue="">
-                  <option value="">Tất cả</option>
-                  <option value="1">Nguyễn Văn A</option>
-                  <option value="2">Trần Thị B</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="filterDate">
-                <Form.Label>Ngày</Form.Label>
-                <Form.Control type="date" />
-              </Form.Group>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
 
       <Card className="border-0 shadow-sm" style={{ borderRadius: 16 }}>
         <Card.Body className="p-0">
@@ -55,82 +55,168 @@ export default function AdminSchedulesPage() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Nguyễn Văn A</td>
-                <td>29/09/2026</td>
-                <td>08:00</td>
-                <td>12:00</td>
-                <td className="text-end">
-                  <Button variant="outline-secondary" size="sm" className="me-2">
-                    Sửa
-                  </Button>
-                  <Button variant="outline-danger" size="sm">
-                    Xóa
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td>Trần Thị B</td>
-                <td>29/09/2026</td>
-                <td>13:00</td>
-                <td>18:00</td>
-                <td className="text-end">
-                  <Button variant="outline-secondary" size="sm" className="me-2">
-                    Sửa
-                  </Button>
-                  <Button variant="outline-danger" size="sm">
-                    Xóa
-                  </Button>
-                </td>
-              </tr>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} className="text-center text-danger py-4">
+                    {error}
+                  </td>
+                </tr>
+              ) : schedules.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    Chưa có lịch làm việc.
+                  </td>
+                </tr>
+              ) : (
+                schedules.map((schedule) => (
+                  <tr key={schedule.id}>
+                    <td>{schedule.staffName}</td>
+                    <td>{schedule.workDate}</td>
+                    <td>{schedule.startTime.slice(0, 5)}</td>
+                    <td>{schedule.endTime.slice(0, 5)}</td>
+                    <td className="text-end">
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => handleEdit(schedule)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleDelete(schedule.id)}
+                      >
+                        Xóa
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </Table>
         </Card.Body>
       </Card>
 
-      <Modal show={false} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Thêm / sửa lịch làm việc</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="scheduleStaff">
-              <Form.Label>Nhân viên</Form.Label>
-              <Form.Select defaultValue="">
-                <option value="" disabled>
-                  Chọn nhân viên
+      <Modal show={showModal}
+        onHide={handleClose}
+        centered
+        backdrop={submitting ? "static" : true}
+        keyboard={!submitting}
+      >
+        <Form onSubmit={handleSubmit}>
+          <Modal.Header closeButton={!submitting}>
+            <Modal.Title>
+              {isEditing ? "Cập nhật lịch làm việc" : "Thêm lịch làm việc"}
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            {formError && (
+              <Alert variant="danger">
+                {formError}
+              </Alert>
+            )}
+
+            <Form.Select
+              name="staffId"
+              value={form.staffId}
+              onChange={handleChange}
+              required
+              disabled={staffsLoading}
+            >
+              <option value={0} disabled>
+                {staffsLoading ? "Đang tải nhân viên..." : "Chọn nhân viên"}
+              </option>
+
+              {staffs.map((staff) => (
+                <option key={staff.id} value={staff.id}>
+                  {staff.fullName}
                 </option>
-                <option value="1">Nguyễn Văn A</option>
-                <option value="2">Trần Thị B</option>
-              </Form.Select>
-            </Form.Group>
+              ))}
+            </Form.Select>
+
             <Form.Group className="mb-3" controlId="scheduleDate">
               <Form.Label>Ngày làm</Form.Label>
-              <Form.Control type="date" />
+              <Form.Control
+                type="date"
+                name="workDate"
+                value={form.workDate}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
+
             <Row className="g-3">
               <Col md={6}>
                 <Form.Group controlId="scheduleStart">
                   <Form.Label>Giờ bắt đầu</Form.Label>
-                  <Form.Control type="time" defaultValue="08:00" />
+                  <Form.Control
+                    type="time"
+                    name="startTime"
+                    value={form.startTime}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group controlId="scheduleEnd">
                   <Form.Label>Giờ kết thúc</Form.Label>
-                  <Form.Control type="time" defaultValue="12:00" />
+                  <Form.Control
+                    type="time"
+                    name="endTime"
+                    value={form.endTime}
+                    onChange={handleChange}
+                    required
+                  />
                 </Form.Group>
               </Col>
             </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary">Đóng</Button>
-          <Button className="border-0" style={{ background: TEAL }}>
-            Lưu
-          </Button>
-        </Modal.Footer>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              type="submit"
+              className="border-0"
+              style={{ background: TEAL }}
+
+              disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <Spinner
+                    animation="border"
+                    size="sm"
+                    className="me-2"
+                  />
+                  Đang lưu...
+                </>
+              ) : (
+                isEditing ? "Cập nhật" : "Thêm lịch"
+              )}
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
+      <AppToast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() =>
+          setToast((prev) => ({
+            ...prev,
+            show: false,
+          }))
+        }
+      />
     </>
   );
 }

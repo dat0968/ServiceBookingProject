@@ -112,6 +112,7 @@ export default function useServicesAdmin( fetchServices: () => Promise<void>) {
         await fetchServices();
     }
 
+    
     return {
         showModal,
         isEditing,

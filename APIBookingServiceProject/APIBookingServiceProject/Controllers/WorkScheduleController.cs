@@ -1,11 +1,13 @@
 ﻿using APIBookingServiceProject.DTOs.WorkScheduleDTO;
 using APIBookingServiceProject.Services.WorkScheduleManager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIBookingServiceProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class WorkScheduleController : ControllerBase
     {
         private readonly IWorkScheduleManager _workScheduleManager;
