@@ -1,11 +1,13 @@
 ﻿using APIBookingServiceProject.DTOs.EmployeeDTO;
 using APIBookingServiceProject.Services.EmpolyeeManager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIBookingServiceProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class StaffController : ControllerBase
     {
         private readonly IEmployeeManager _service;
