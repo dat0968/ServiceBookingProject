@@ -153,18 +153,24 @@ export default function useStaffAdmin() {
         }
     };
 
-    const handleChangeStatus = async (
-        staff: StaffResponse
-    ) => {
+    const handleChangeStatus = async (staff: StaffResponse) => {
         try {
             setError("");
 
-            await changeStatus(
-                staff.id,
-                !staff.isActive
-            );
+            const newStatus = !staff.isActive;
 
-            await fetchStaffs();
+            await changeStatus(staff.id, newStatus);
+
+            setStaffs((prev) =>
+                prev.map((item) =>
+                    item.id === staff.id
+                        ? {
+                            ...item,
+                            isActive: newStatus,
+                        }
+                        : item
+                )
+            );
         } catch (error: any) {
             setError(
                 error.response?.data?.message ??
