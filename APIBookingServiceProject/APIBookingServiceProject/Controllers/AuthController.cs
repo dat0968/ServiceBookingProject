@@ -40,10 +40,12 @@ namespace APIBookingServiceProject.Controllers
         [Authorize]
         public IActionResult ValidateToken()
         {
+            var _role = User.FindFirstValue(ClaimTypes.Role);
             return Ok(new
             {
                 isAuthenticated = true,
-                message = "Token is valid"
+                message = "Token is valid",
+                role = _role
             });
         }
         [HttpPost("logout")]

@@ -35,13 +35,7 @@ export function useAuthForm() {
                 type: "success",
             });
             setTimeout(() => {
-                // router.push(returnUrl);
-                if (response.role == 'Customer') {
-                    router.push(returnUrl);
-                }
-                else{
-                    router.push('/admin/services');
-                }
+                router.push(returnUrl);
             }, 2000)
         } catch {
             setError("Email hoặc mật khẩu không đúng. Vui lòng thử lại.");

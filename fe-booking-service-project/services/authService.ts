@@ -8,11 +8,11 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
 export const logout = async (): Promise<void> => {
     await api.post("/auth/logout");
 } 
-export const validateToken = async (token: String) : Promise<boolean> => {
-    const response = await api.get(`/auth/validate`, {
+export const validateToken = async (token: String) : Promise<LoginResponse> => {
+    const response = await api.get<LoginResponse>(`/auth/validate`, {
         headers: {
             Authorization: `Bearer ${token}`,
         }
     })
-    return response.status == 200;
+    return response.data;
 }
