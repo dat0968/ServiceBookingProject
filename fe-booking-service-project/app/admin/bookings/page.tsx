@@ -256,7 +256,8 @@ export default function AdminBookingsPage() {
 
                     <td className="text-end">
                       {booking.statusBooking !== "Cancelled" &&
-                        booking.statusBooking !== "Completed" && (
+                        booking.statusBooking !== "Completed" && 
+                        booking.statusBooking !== "Confirmed" && (
                           <Button
                             variant="outline-danger"
                             size="sm"
