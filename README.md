@@ -28,7 +28,9 @@ Role hợp lệ khi tạo/cập nhật user: `Admin`, `Customer`
 - CRUD lịch làm việc (Admin): `StartTime` phải nhỏ hơn `EndTime`; chống trùng ca cùng nhân viên cùng ngày.
 - Customer tạo booking: backend tính `EndTime = StartTime + DurationMinutes`; từ chối dịch vụ bị khóa; từ chối đặt trong quá khứ; sinh `BookingCode` unique; trạng thái ban đầu `Pending`.
 - Customer xem booking của mình (lọc ngày, trạng thái, phân trang); chỉ xem/hủy booking thuộc về mình.
+- Customer không tự hoàn thành booking.
 - Admin xem toàn bộ booking (lọc ngày, trạng thái, phân trang); `PATCH` trạng thái `Confirmed` / `Completed`; gán `StaffId` khi cập nhật trạng thái;
+- Dựa vào thời gian thực hiện (bắt đầu và kết thúc) booking của khách hàng, hệ thống sẽ đề xuất các nhân viên có ca làm việc phù hợp với booking đó, admin sẽ chọn ra một nhân viên phù hợp trong số đó để ủy thác booking. Nếu không có nhân viên nào có ca làm việc phù hợp với booking đó, hệ thống sẽ hiện thông báo "Không có nhân viên phù hợp cho booking này"
 - Hủy booking: bắt buộc lý do; không hủy `Cancelled` / `Completed`; không hủy `Confirmed` (code coi Confirmed là “đã bắt đầu”);
 - Swagger UI khi `ASPNETCORE_ENVIRONMENT=Development`.
 - Màn hình: `/`, `/login`, `/services`, `/booking`, `/my-bookings`, `/admin/services`, `/admin/schedules`, `/admin/bookings`, `/admin/staffs`.
