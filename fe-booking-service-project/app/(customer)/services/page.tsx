@@ -53,7 +53,7 @@ export default function Services() {
         </div>) : (
           <>
             <Row className="g-4">
-              {services.map((service) => (
+              {services.filter((service => service.isActive == true)).map((service) => (
                 <Col md={6} lg={4} key={service.id}>
                   <Card className="h-100 border-0 shadow-sm">
                     <Card.Body className="p-4 d-flex flex-column">

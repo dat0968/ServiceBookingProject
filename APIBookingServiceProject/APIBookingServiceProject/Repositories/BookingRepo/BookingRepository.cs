@@ -154,5 +154,14 @@ namespace APIBookingServiceProject.Repositories.BookingRepo
                 )
                 .ToListAsync();
         }
-    }
+        public async Task<bool> IsCustomerBookingOverlappingAsync(int customerId, DateTime startTime, DateTime endTime)
+            {
+                return await dbContext.Bookings.AnyAsync(b =>
+                    b.CustomerId == customerId &&
+                    b.StartTime < endTime &&
+                    b.EndTime > startTime &&
+                    b.StatusBooking != BookingHelper.Cancelled
+                );
+            }
+        }
 }

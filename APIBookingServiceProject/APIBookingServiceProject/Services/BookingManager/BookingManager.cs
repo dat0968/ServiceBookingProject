@@ -51,8 +51,10 @@ namespace APIBookingServiceProject.Services.BookingManager
 
             if (!service.IsActive)
             {
-                throw new BadRequestException("Không được đặt dịch vụ đang bị khóa.");
+                throw new ConflictException("Không được đặt dịch vụ đang bị khóa.");
             }
+
+
 
             var startTime = dto.StartTime;
             var endTime = startTime.AddMinutes(service.DurationMinutes);
@@ -60,6 +62,17 @@ namespace APIBookingServiceProject.Services.BookingManager
             if (startTime < DateTime.Now)
             {
                 throw new BadRequestException("Không đặt lịch trong quá khứ.");
+            }
+
+            var isOverlapping = await bookingRepository.IsCustomerBookingOverlappingAsync(
+                customerId,
+                startTime,
+                endTime
+            );
+
+            if (isOverlapping)
+            {
+                throw new ConflictException("Bạn đã có lịch đặt trùng thời gian.");
             }
 
             var booking = new Booking
@@ -281,31 +294,6 @@ namespace APIBookingServiceProject.Services.BookingManager
             return currentUserId;
         }
 
-        //private async Task<List<EmployeeResponseDto>> EnsureWithinWorkScheduleAsync(int? staffId, DateTime startTime, DateTime endTime)
-        //{
-        //    //var workDate = DateOnly.FromDateTime(startTime);
-        //    //if (DateOnly.FromDateTime(endTime) != workDate)
-        //    //{
-        //    //    throw new BadRequestException("Booking phải nằm trong cùng một ngày làm việc.");
-        //    //}
-
-        //    var schedules = await workScheduleRepository.GetAllAsync();
-        //    var filterScheduleByTime = schedules.Where(s => BookingHelper.IsWithinWorkSchedule(startTime, endTime, s));
-            
-        //    //if (!isInside)
-        //    //{
-        //    //    throw new BadRequestException("Booking phải nằm hoàn toàn trong giờ làm việc.");
-        //    //}
-        //}
-
-        private async Task EnsureNoOverlapAsync(int? staffId, DateTime startTime, DateTime endTime)
-        {
-            var isOverlapping = await bookingRepository.IsOverlappingAsync(staffId, startTime, endTime);
-            if (isOverlapping)
-            {
-                throw new ConflictException("Khung giờ này đã được đặt. Vui lòng chọn thời gian khác.");
-            }
-        }
 
         private async Task<string> GenerateUniqueBookingCodeAsync()
         {

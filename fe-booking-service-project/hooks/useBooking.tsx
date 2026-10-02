@@ -128,7 +128,11 @@ export default function useBooking() {
             }, 2000)
         } catch (error: any) {
             if (error.response?.status !== 401) {
-                setError(error.response.data.message);
+                setToast({
+                    show: true,
+                    message: error.response.data.message,
+                    type: "success",
+                });;
             }
             console.log("AXIOS ERROR");
             console.log("URL:", error.config?.url);
